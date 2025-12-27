@@ -5,225 +5,65 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Sự Kiện Play Together</title>
     <style>
-        :root {
-            --primary-color: #ffcc00;
-            --bg-color: #121212;
-            --card-bg: #2c2c2c;
-        }
-
-        * {
-            box-sizing: border-box;
-            -webkit-tap-highlight-color: transparent;
-            margin: 0;
-            padding: 0;
-        }
-
-        body {
-            font-family: -apple-system, sans-serif;
-            background: var(--bg-color);
-            color: #fff;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            min-height: 100vh;
-            padding: 10px;
-        }
-
-        h2 {
-            margin: 15px 0;
-            color: var(--primary-color);
-            font-size: 1.2rem;
-            text-align: center;
-        }
-
-        .controls {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            align-items: center;
-            gap: 8px;
-            background: #1e1e1e;
-            padding: 12px;
-            border-radius: 12px;
-            margin-bottom: 15px;
-            width: 100%;
-            max-width: 400px;
-        }
-
-        .input-group {
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            font-size: 14px;
-        }
-
-        input {
-            width: 40px;
-            padding: 6px;
-            border-radius: 5px;
-            border: 1px solid #444;
-            background: #333;
-            color: white;
-            text-align: center;
-        }
-
-        button {
-            padding: 8px 12px;
-            cursor: pointer;
-            border: none;
-            border-radius: 6px;
-            background: #444;
-            color: white;
-            font-weight: bold;
-            font-size: 12px;
-            transition: 0.2s;
-        }
-
-        button:active { transform: scale(0.92); }
+        :root { --p: #ffcc00; --bg: #121212; --c: #2c2c2c; }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
+        body { font-family: sans-serif; background: var(--bg); color: #fff; display: flex; flex-direction: column; align-items: center; min-height: 100vh; padding: 10px; }
+        h2 { margin: 15px 0; color: var(--p); font-size: 1.2rem; }
+        .controls { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; background: #1e1e1e; padding: 12px; border-radius: 12px; margin-bottom: 15px; width: 100%; max-width: 400px; }
+        input { width: 45px; padding: 6px; border-radius: 5px; border: 1px solid #444; background: #333; color: white; text-align: center; }
+        button { padding: 8px 12px; cursor: pointer; border: none; border-radius: 6px; background: #444; color: white; font-weight: bold; font-size: 12px; }
         .btn-create { background: #28a745; }
         .btn-clear { background: #dc3545; }
-
-        #icons {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 6px;
-            margin-bottom: 15px;
-            width: 100%;
-            max-width: 380px;
-        }
-
-        #icons img {
-            width: 45px;
-            height: 60px;
-            cursor: pointer;
-            border-radius: 6px;
-            border: 2px solid transparent;
-            transition: 0.2s;
-            background: #252525;
-        }
-
-        #icons img.selected {
-            border-color: var(--primary-color);
-            transform: translateY(-3px);
-            box-shadow: 0 4px 8px rgba(255, 204, 0, 0.3);
-        }
-
-        /* KHU VỰC CHỐNG TRÀN Ô */
-        .scroll-container {
-            width: 100%;
-            overflow-x: auto; /* Cho phép cuộn ngang nếu nhiều cột */
-            padding: 10px 0;
-            display: flex;
-            justify-content: center;
-        }
-
-        #grid {
-            display: grid;
-            gap: 5px;
-            padding: 5px;
-            margin: 0 auto;
-        }
-
-        .cell {
-            width: 55px;
-            height: 75px;
-            background: var(--card-bg);
-            border-radius: 5px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border: 1px solid #3d3d3d;
-            transition: 0.1s;
-        }
-
-        .cell:active { background: #3d3d3d; }
-
-        .cell img {
-            width: 100%;
-            height: 100%;
-            border-radius: 4px;
-            pointer-events: none;
-            animation: popIn 0.2s ease-out;
-        }
-
-        @keyframes popIn {
-            from { transform: scale(0.6); opacity: 0; }
-            to { transform: scale(1); opacity: 1; }
-        }
+        #icons { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; margin-bottom: 20px; width: 100%; max-width: 380px; }
+        #icons img { width: 45px; height: 60px; cursor: pointer; border-radius: 6px; border: 2px solid transparent; background: #252525; }
+        #icons img.selected { border-color: var(--p); transform: translateY(-3px); box-shadow: 0 4px 8px rgba(255, 204, 0, 0.3); }
+        .scroll-container { width: 100%; overflow-x: auto; padding: 10px 0; display: flex; justify-content: center; }
+        #grid { display: grid; gap: 5px; padding: 5px; margin: 0 auto; }
+        .cell { width: 55px; height: 75px; background: var(--c); border-radius: 5px; cursor: pointer; display: flex; align-items: center; justify-content: center; border: 1px solid #3d3d3d; }
+        .cell img { width: 100%; height: 100%; border-radius: 4px; pointer-events: none; animation: pop 0.2s ease-out; }
+        @keyframes pop { from { transform: scale(0.6); opacity: 0; } to { transform: scale(1); opacity: 1; } }
     </style>
 </head>
 <body>
-
     <h2>SỰ KIỆN PLAY TOGETHER</h2>
-
     <div class="controls">
-        <div class="input-group">H: <input id="rows" type="number" value="4"></div>
-        <div class="input-group">C: <input id="cols" type="number" value="5"></div>
+        H: <input id="rows" type="number" value="4">
+        C: <input id="cols" type="number" value="5">
         <button class="btn-create" onclick="createGrid()">Tạo</button>
         <button onclick="undo()">Lùi</button>
         <button class="btn-clear" onclick="clearGrid()">Xóa</button>
     </div>
-
     <div id="icons">
-        <img src="1.png" onclick="selectIcon(this, '1.png')">
-        <img src="2.png" onclick="selectIcon(this, '2.png')">
-        <img src="3.png" onclick="selectIcon(this, '3.png')">
-        <img src="4.png" onclick="selectIcon(this, '4.png')">
-        <img src="5.png" onclick="selectIcon(this, '5.png')">
-        <img src="6.png" onclick="selectIcon(this, '6.png')">
-        <img src="7.png" onclick="selectIcon(this, '7.png')">
-        <img src="8.png" onclick="selectIcon(this, '8.png')">
-        <img src="9.png" onclick="selectIcon(this, '9.png')">
-        <img src="10.png" onclick="selectIcon(this, '10.png')">
+        <img src="1.png" onclick="selectIcon(this, '1.png')"><img src="2.png" onclick="selectIcon(this, '2.png')">
+        <img src="3.png" onclick="selectIcon(this, '3.png')"><img src="4.png" onclick="selectIcon(this, '4.png')">
+        <img src="5.png" onclick="selectIcon(this, '5.png')"><img src="6.png" onclick="selectIcon(this, '6.png')">
+        <img src="7.png" onclick="selectIcon(this, '7.png')"><img src="8.png" onclick="selectIcon(this, '8.png')">
+        <img src="9.png" onclick="selectIcon(this, '9.png')"><img src="10.png" onclick="selectIcon(this, '10.png')">
     </div>
-
-    <div class="scroll-container">
-        <div id="grid"></div>
-    </div>
-
+    <div class="scroll-container"><div id="grid"></div></div>
     <script>
-        let currentIcon = '';
-        let history = [];
-        const grid = document.getElementById('grid');
-        const rowsInput = document.getElementById('rows');
-        const colsInput = document.getElementById('cols');
-
+        let cur = '', hist = [];
+        const grid = document.getElementById('grid'), rs = document.getElementById('rows'), cs = document.getElementById('cols');
         function selectIcon(img, icon) {
             document.querySelectorAll('#icons img').forEach(i => i.classList.remove('selected'));
-            img.classList.add('selected');
-            currentIcon = icon;
+            img.classList.add('selected'); cur = icon;
         }
-
         function createGrid() {
-            const r = parseInt(rowsInput.value) || 1;
-            const c = parseInt(colsInput.value) || 1;
-            grid.innerHTML = '';
-            grid.style.gridTemplateColumns = `repeat(${c}, 55px)`;
-            history = [];
+            const r = parseInt(rs.value) || 1, c = parseInt(cs.value) || 1;
+            grid.innerHTML = ''; grid.style.gridTemplateColumns = `repeat(${c}, 55px)`; hist = [];
             for (let i = 0; i < r * c; i++) {
                 const cell = document.createElement('div');
                 cell.className = 'cell';
                 cell.onclick = () => {
-                    if (!currentIcon) return;
-                    history.push({ el: cell, old: cell.innerHTML });
-                    cell.innerHTML = `<img src="${currentIcon}">`;
+                    if (!cur) return;
+                    hist.push({ el: cell, old: cell.innerHTML });
+                    cell.innerHTML = `<img src="${cur}">`;
                 };
                 grid.appendChild(cell);
             }
         }
-
-        function undo() {
-            const last = history.pop();
-            if (last) last.el.innerHTML = last.old;
-        }
-
-        function clearGrid() {
-            document.querySelectorAll('.cell').forEach(c => c.innerHTML = '');
-            history = [];
-        }
-
+        function undo() { const last = hist.pop(); if (last) last.el.innerHTML = last.old; }
+        function clearGrid() { document.querySelectorAll('.cell').forEach(c => c.innerHTML = ''); hist = []; }
         createGrid();
     </script>
 </body>
