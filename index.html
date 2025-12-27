@@ -1,636 +1,231 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Sự Kiện Play Together</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Sự Kiện Play Together</title>
+    <style>
+        :root {
+            --primary-color: #ffcc00;
+            --bg-color: #121212;
+            --card-bg: #2c2c2c;
+        }
 
-<style>
-  :root {
-    --primary-color: #ffcc00;
-    --bg-color: #121212;
-    --card-bg: #2c2c2c;
-  }
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+            margin: 0;
+            padding: 0;
+        }
 
-  /* Reset và chống tràn màn hình */
-  * { 
-    box-sizing: border-box; 
-    -webkit-tap-highlight-color: transparent;
-    margin: 0;
-    padding: 0;
-  }
+        body {
+            font-family: -apple-system, sans-serif;
+            background: var(--bg-color);
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            padding: 10px;
+        }
 
-  body {
-    font-family: -apple-system, sans-serif;
-    background: var(--bg-color);
-    color: #fff;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    min-height: 100vh;
-    padding: 15px;
-  }
+        h2 {
+            margin: 15px 0;
+            color: var(--primary-color);
+            font-size: 1.2rem;
+            text-align: center;
+        }
 
-  h2 {
-    margin: 10px 0 20px 0;
-    color: var(--primary-color);
-    text-align: center;
-  }
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            background: #1e1e1e;
+            padding: 12px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            width: 100%;
+            max-width: 400px;
+        }
 
-  /* Bảng điều khiển */
-  .controls {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    align-items: center;
-    gap: 10px;
-    background: #1e1e1e;
-    padding: 15px;
-    border-radius: 12px;
-    margin-bottom: 20px;
-    width: 100%;
-    max-width: 450px;
-  }
+        .input-group {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 14px;
+        }
 
-  .input-group {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-  }
+        input {
+            width: 40px;
+            padding: 6px;
+            border-radius: 5px;
+            border: 1px solid #444;
+            background: #333;
+            color: white;
+            text-align: center;
+        }
 
-  input {
-    width: 45px;
-    padding: 8px;
-    border-radius: 6px;
-    border: 1px solid #444;
-    background: #333;
-    color: white;
-    text-align: center;
-  }
+        button {
+            padding: 8px 12px;
+            cursor: pointer;
+            border: none;
+            border-radius: 6px;
+            background: #444;
+            color: white;
+            font-weight: bold;
+            font-size: 12px;
+            transition: 0.2s;
+        }
 
-  button {
-    padding: 10px 15px;
-    cursor: pointer;
-    border: none;
-    border-radius: 8px;
-    background: #444;
-    color: white;
-    font-weight: bold;
-    font-size: 13px;
-    transition: 0.2s;
-  }
+        button:active { transform: scale(0.92); }
+        .btn-create { background: #28a745; }
+        .btn-clear { background: #dc3545; }
 
-  button:active { transform: scale(0.95); }
-  .btn-create { background: #28a745; }
-  .btn-clear { background: #dc3545; }
+        #icons {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 6px;
+            margin-bottom: 15px;
+            width: 100%;
+            max-width: 380px;
+        }
 
-  /* Danh sách biểu tượng */
-  #icons {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 8px;
-    margin-bottom: 25px;
-    max-width: 400px;
-  }
+        #icons img {
+            width: 45px;
+            height: 60px;
+            cursor: pointer;
+            border-radius: 6px;
+            border: 2px solid transparent;
+            transition: 0.2s;
+            background: #252525;
+        }
 
-  #icons img {
-    width: 50px;
-    height: 65px;
-    cursor: pointer;
-    border-radius: 8px;
-    border: 3px solid transparent;
-    transition: 0.2s ease;
-    background: #252525;
-  }
+        #icons img.selected {
+            border-color: var(--primary-color);
+            transform: translateY(-3px);
+            box-shadow: 0 4px 8px rgba(255, 204, 0, 0.3);
+        }
 
-  #icons img.selected {
-    border-color: var(--primary-color);
-    transform: translateY(-5px);
-    box-shadow: 0 4px 10px rgba(255, 204, 0, 0.4);
-  }
+        /* KHU VỰC CHỐNG TRÀN Ô */
+        .scroll-container {
+            width: 100%;
+            overflow-x: auto; /* Cho phép cuộn ngang nếu nhiều cột */
+            padding: 10px 0;
+            display: flex;
+            justify-content: center;
+        }
 
-  /* VÙNG CHỨA BẢNG - CHỐNG TRÀN TUYỆT ĐỐI */
-  .grid-wrapper {
-    width: 100%;
-    max-width: 100vw;
-    overflow-x: auto; /* Cho phép cuộn ngang nếu bảng quá to */
-    display: flex;
-    justify-content: flex-start; /* Để cuộn mượt hơn từ bên trái */
-    padding: 10px 0;
-    -webkit-overflow-scrolling: touch;
-  }
+        #grid {
+            display: grid;
+            gap: 5px;
+            padding: 5px;
+            margin: 0 auto;
+        }
 
-  #grid {
-    display: grid;
-    gap: 6px;
-    margin: 0 auto; /* Luôn nằm giữa nếu bảng nhỏ hơn màn hình */
-    padding: 10px;
-  }
+        .cell {
+            width: 55px;
+            height: 75px;
+            background: var(--card-bg);
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid #3d3d3d;
+            transition: 0.1s;
+        }
 
-  .cell {
-    width: 60px;
-    height: 80px;
-    background: var(--card-bg);
-    border-radius: 6px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: 1px solid #3d3d3d;
-    transition: background 0.2s;
-  }
+        .cell:active { background: #3d3d3d; }
 
-  .cell:active { background: #444; }
+        .cell img {
+            width: 100%;
+            height: 100%;
+            border-radius: 4px;
+            pointer-events: none;
+            animation: popIn 0.2s ease-out;
+        }
 
-  .cell img {
-    width: 100%;
-    height: 100%;
-    border-radius: 5px;
-    pointer-events: none;
-    animation: zoomIn 0.2s ease-out;
-  }
-
-  @keyframes zoomIn {
-    from { transform: scale(0.5); opacity: 0; }
-    to { transform: scale(1); opacity: 1; }
-  }
-</style>
+        @keyframes popIn {
+            from { transform: scale(0.6); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+    </style>
 </head>
 <body>
 
-  <h2>SỰ KIỆN PLAY TOGETHER</h2>
+    <h2>SỰ KIỆN PLAY TOGETHER</h2>
 
-  <div class="controls">
-    <div class="input-group">Hàng: <input id="rows" type="number" value="4" min="1"></div>
-    <div class="input-group">Cột: <input id="cols" type="number" value="5" min="1"></div>
-    <button class="btn-create" onclick="createGrid()">Tạo bàn</button>
-    <button onclick="undo()">Quay lại</button>
-    <button class="btn-clear" onclick="clearGrid()">Xóa</button>
-  </div>
+    <div class="controls">
+        <div class="input-group">H: <input id="rows" type="number" value="4"></div>
+        <div class="input-group">C: <input id="cols" type="number" value="5"></div>
+        <button class="btn-create" onclick="createGrid()">Tạo</button>
+        <button onclick="undo()">Lùi</button>
+        <button class="btn-clear" onclick="clearGrid()">Xóa</button>
+    </div>
 
-  <div id="icons">
-    <img src="1.png" onclick="selectIcon(this, '1.png')">
-    <img src="2.png" onclick="selectIcon(this, '2.png')">
-    <img src="3.png" onclick="selectIcon(this, '3.png')">
-    <img src="4.png" onclick="selectIcon(this, '4.png')">
-    <img src="5.png" onclick="selectIcon(this, '5.png')">
-    <img src="6.png" onclick="selectIcon(this, '6.png')">
-    <img src="7.png" onclick="selectIcon(this, '7.png')">
-    <img src="8.png" onclick="selectIcon(this, '8.png')">
-    <img src="9.png" onclick="selectIcon(this, '9.png')">
-    <img src="10.png" onclick="selectIcon(this, '10.png')">
-  </div>
+    <div id="icons">
+        <img src="1.png" onclick="selectIcon(this, '1.png')">
+        <img src="2.png" onclick="selectIcon(this, '2.png')">
+        <img src="3.png" onclick="selectIcon(this, '3.png')">
+        <img src="4.png" onclick="selectIcon(this, '4.png')">
+        <img src="5.png" onclick="selectIcon(this, '5.png')">
+        <img src="6.png" onclick="selectIcon(this, '6.png')">
+        <img src="7.png" onclick="selectIcon(this, '7.png')">
+        <img src="8.png" onclick="selectIcon(this, '8.png')">
+        <img src="9.png" onclick="selectIcon(this, '9.png')">
+        <img src="10.png" onclick="selectIcon(this, '10.png')">
+    </div>
 
-  <div class="grid-wrapper">
-    <div id="grid"></div>
-  </div>
+    <div class="scroll-container">
+        <div id="grid"></div>
+    </div>
 
-  <script>
-    let currentIcon = '';
-    let history = [];
-    const grid = document.getElementById('grid');
-    const rowsInput = document.getElementById('rows');
-    const colsInput = document.getElementById('cols');
+    <script>
+        let currentIcon = '';
+        let history = [];
+        const grid = document.getElementById('grid');
+        const rowsInput = document.getElementById('rows');
+        const colsInput = document.getElementById('cols');
 
-    function selectIcon(img, icon) {
-      document.querySelectorAll('#icons img').forEach(i => i.classList.remove('selected'));
-      img.classList.add('selected');
-      currentIcon = icon;
-    }
+        function selectIcon(img, icon) {
+            document.querySelectorAll('#icons img').forEach(i => i.classList.remove('selected'));
+            img.classList.add('selected');
+            currentIcon = icon;
+        }
 
-    function createGrid() {
-      const rows = parseInt(rowsInput.value) || 1;
-      const cols = parseInt(colsInput.value) || 1;
-      
-      grid.innerHTML = '';
-      // Cố định kích thước để không bị nhảy khi bảng lớn
-      grid.style.gridTemplateColumns = `repeat(${cols}, 60px)`;
-      history = [];
+        function createGrid() {
+            const r = parseInt(rowsInput.value) || 1;
+            const c = parseInt(colsInput.value) || 1;
+            grid.innerHTML = '';
+            grid.style.gridTemplateColumns = `repeat(${c}, 55px)`;
+            history = [];
+            for (let i = 0; i < r * c; i++) {
+                const cell = document.createElement('div');
+                cell.className = 'cell';
+                cell.onclick = () => {
+                    if (!currentIcon) return;
+                    history.push({ el: cell, old: cell.innerHTML });
+                    cell.innerHTML = `<img src="${currentIcon}">`;
+                };
+                grid.appendChild(cell);
+            }
+        }
 
-      for (let i = 0; i < rows * cols; i++) {
-        const cell = document.createElement('div');
-        cell.className = 'cell';
-        cell.onclick = () => {
-          if (!currentIcon) return;
-          history.push({ cell: cell, prev: cell.innerHTML });
-          cell.innerHTML = `<img src="${currentIcon}">`;
-        };
-        grid.appendChild(cell);
-      }
-    }
+        function undo() {
+            const last = history.pop();
+            if (last) last.el.innerHTML = last.old;
+        }
 
-    function undo() {
-      const last = history.pop();
-      if (last) last.cell.innerHTML = last.prev;
-    }
+        function clearGrid() {
+            document.querySelectorAll('.cell').forEach(c => c.innerHTML = '');
+            history = [];
+        }
 
-    function clearGrid() {
-      document.querySelectorAll('.cell').forEach(c => c.innerHTML = '');
-      history = [];
-    }
-
-    // Tự động tạo bảng lần đầu
-    createGrid();
-  </script>
-
+        createGrid();
+    </script>
 </body>
 </html>
-
-  .cell {
-    width: 50px; /* Thu nhỏ kích thước ô để chứa được nhiều hơn */
-    height: 70px;
-    background: var(--card-bg);
-    border-radius: 4px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: 1px solid #3d3d3d;
-  }
-
-  .cell img {
-    width: 100%;
-    height: 100%;
-    border-radius: 4px;
-    pointer-events: none;
-    animation: pop 0.2s ease-out;
-  }
-
-  @keyframes pop {
-    from { transform: scale(0.7); opacity: 0; }
-    to { transform: scale(1); opacity: 1; }
-  }
-</style>
-</head>
-<body>
-
-  <div class="controls">
-    Hàng: <input id="rows" type="number" value="4" min="1">
-    Cột: <input id="cols" type="number" value="5" min="1">
-    <button class="btn-create" onclick="createGrid()">Tạo bàn</button>
-    <button onclick="undo()">Quay lại</button>
-    <button class="btn-clear" onclick="clearGrid()">Xóa</button>
-  </div>
-
-  <div id="icons">
-    <img src="1.png" onclick="selectIcon(this, '1.png')">
-    <img src="2.png" onclick="selectIcon(this, '2.png')">
-    <img src="3.png" onclick="selectIcon(this, '3.png')">
-    <img src="4.png" onclick="selectIcon(this, '4.png')">
-    <img src="5.png" onclick="selectIcon(this, '5.png')">
-    <img src="6.png" onclick="selectIcon(this, '6.png')">
-    <img src="7.png" onclick="selectIcon(this, '7.png')">
-    <img src="8.png" onclick="selectIcon(this, '8.png')">
-    <img src="9.png" onclick="selectIcon(this, '9.png')">
-    <img src="10.png" onclick="selectIcon(this, '10.png')">
-  </div>
-
-  <div class="grid-container">
-    <div id="grid"></div>
-  </div>
-
-  <script>
-    let currentIcon = '';
-    let history = [];
-    const grid = document.getElementById('grid');
-    const rowsInput = document.getElementById('rows');
-    const colsInput = document.getElementById('cols');
-
-    function selectIcon(img, icon) {
-      document.querySelectorAll('#icons img').forEach(i => i.classList.remove('selected'));
-      img.classList.add('selected');
-      currentIcon = icon;
-    }
-
-    function createGrid() {
-      const rows = parseInt(rowsInput.value) || 1;
-      const cols = parseInt(colsInput.value) || 1;
-      
-      grid.innerHTML = '';
-      // Cố định chiều rộng cột để không bị nhảy khi bảng lớn
-      grid.style.gridTemplateColumns = `repeat(${cols}, 50px)`;
-      history = [];
-
-      for (let i = 0; i < rows * cols; i++) {
-        const cell = document.createElement('div');
-        cell.className = 'cell';
-        cell.onclick = () => {
-          if (!currentIcon) return;
-          history.push({ cell: cell, prev: cell.innerHTML });
-          cell.innerHTML = `<img src="${currentIcon}">`;
-        };
-        grid.appendChild(cell);
-      }
-    }
-
-    function undo() {
-      const last = history.pop();
-      if (last) last.cell.innerHTML = last.prev;
-    }
-
-    function clearGrid() {
-      document.querySelectorAll('.cell').forEach(c => c.innerHTML = '');
-      history = [];
-    }
-
-    createGrid();
-  </script>
-</body>
-</html>
-
-  #icons img.selected {
-    border-color: var(--primary-color);
-    transform: scale(1.05) translateY(-3px);
-    box-shadow: 0 5px 15px rgba(255, 204, 0, 0.3);
-  }
-
-  /* Grid Area */
-  #grid {
-    display: grid;
-    justify-content: center;
-    gap: 6px;
-    padding: 10px;
-    background: rgba(255,255,255,0.03);
-    border-radius: 12px;
-  }
-
-  .cell {
-    width: 65px;
-    height: 85px;
-    background: var(--card-bg);
-    border-radius: 8px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: background 0.15s, transform 0.1s;
-    border: 1px solid #3d3d3d;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .cell:active {
-    transform: scale(0.95);
-    background: #3d3d3d;
-  }
-
-  .cell img {
-    width: 100%;
-    height: 100%;
-    border-radius: 6px;
-    pointer-events: none;
-    animation: popIn 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    will-change: transform, opacity;
-  }
-
-  @keyframes popIn {
-    0% { transform: scale(0.5); opacity: 0; }
-    100% { transform: scale(1); opacity: 1; }
-  }
-</style>
-</head>
-<body>
-
-  <h2>Sự Kiện Play Together</h2>
-
-  <div class="controls">
-    <input id="rows" type="number" value="4" min="1"> x
-    <input id="cols" type="number" value="5" min="1">
-    <button class="btn-create" onclick="createGrid()">Tạo bàn</button>
-    <button onclick="undo()">Quay lại</button>
-    <button class="btn-clear" onclick="clearGrid()">Xóa</button>
-  </div>
-
-  <div id="icons">
-    <img src="1.png" onclick="selectIcon(this, '1.png')">
-    <img src="2.png" onclick="selectIcon(this, '2.png')">
-    <img src="3.png" onclick="selectIcon(this, '3.png')">
-    <img src="4.png" onclick="selectIcon(this, '4.png')">
-    <img src="5.png" onclick="selectIcon(this, '5.png')">
-    <img src="6.png" onclick="selectIcon(this, '6.png')">
-    <img src="7.png" onclick="selectIcon(this, '7.png')">
-    <img src="8.png" onclick="selectIcon(this, '8.png')">
-    <img src="9.png" onclick="selectIcon(this, '9.png')">
-    <img src="10.png" onclick="selectIcon(this, '10.png')">
-  </div>
-
-  <div id="grid"></div>
-
-  <script>
-    let currentIcon = '';
-    let history = [];
-    const grid = document.getElementById('grid');
-    const rowsInput = document.getElementById('rows');
-    const colsInput = document.getElementById('cols');
-
-    function selectIcon(img, icon) {
-      // Xử lý nhanh lớp selected bằng classList thay vì lặp nặng nề
-      const prevSelected = document.querySelector('#icons img.selected');
-      if (prevSelected) prevSelected.classList.remove('selected');
-      
-      img.classList.add('selected');
-      currentIcon = icon;
-    }
-
-    function createGrid() {
-      const rows = parseInt(rowsInput.value) || 1;
-      const cols = parseInt(colsInput.value) || 1;
-      
-      // Tối ưu: Dùng DocumentFragment để render grid cực nhanh, không gây khựng trang
-      const fragment = document.createDocumentFragment();
-      grid.innerHTML = '';
-      grid.style.gridTemplateColumns = `repeat(${cols}, 65px)`;
-      history = [];
-
-      for (let i = 0; i < rows * cols; i++) {
-        const cell = document.createElement('div');
-        cell.className = 'cell';
-        
-        // Dùng sự kiện mousedown/touchstart để phản hồi nhanh hơn click
-        cell.onmousedown = (e) => {
-          if (!currentIcon) return;
-          if (cell.innerHTML.includes(currentIcon)) return; // Tránh đặt trùng liên tục
-          
-          history.push({ cell: cell, prev: cell.innerHTML });
-          cell.innerHTML = `<img src="${currentIcon}" loading="eager">`;
-        };
-        
-        fragment.appendChild(cell);
-      }
-      grid.appendChild(fragment);
-    }
-
-    function undo() {
-      const last = history.pop();
-      if (last) last.cell.innerHTML = last.prev;
-    }
-
-    function clearGrid() {
-      // Xóa mượt bằng cách chỉ tác động vào các ô có nội dung
-      const cellsWithImg = grid.querySelectorAll('.cell img');
-      cellsWithImg.forEach(img => img.parentElement.innerHTML = '');
-      history = [];
-    }
-
-    // Khởi tạo bàn lần đầu
-    createGrid();
-  </script>
-</body>
-</html>
-
-  .cell {
-    width: 70px;
-    height: 90px;
-    background: var(--card-bg);
-    border-radius: 8px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: background 0.3s, transform 0.1s;
-    overflow: hidden;
-  }
-
-  .cell:hover {
-    background: var(--card-hover);
-  }
-
-  .cell:active {
-    transform: scale(0.95);
-  }
-
-  .cell img {
-    width: 100%;
-    height: 100%;
-    border-radius: 8px;
-    animation: fadeIn 0.3s ease; /* Hiệu ứng hiện ảnh mượt */
-  }
-
-  @keyframes fadeIn {
-    from { opacity: 0; transform: scale(0.8); }
-    to { opacity: 1; transform: scale(1); }
-  }
-</style>
-</head>
-<body>
-
-  <h2>Sự Kiện Play Together</h2>
-
-  <div class="controls">
-    Hàng: <input id="rows" type="number" value="4" min="1">
-    Cột: <input id="cols" type="number" value="5" min="1">
-    <button onclick="createGrid()" style="background: #28a745;">Tạo bàn</button>
-    <button onclick="undo()">Quay lại</button>
-    <button onclick="clearGrid()" style="background: #dc3545;">Xóa</button>
-  </div>
-
-  <div id="icons">
-    <img src="1.png" onclick="selectIcon(this, '1.png')">
-    <img src="2.png" onclick="selectIcon(this, '2.png')">
-    <img src="3.png" onclick="selectIcon(this, '3.png')">
-    <img src="4.png" onclick="selectIcon(this, '4.png')">
-    <img src="5.png" onclick="selectIcon(this, '5.png')">
-    <img src="6.png" onclick="selectIcon(this, '6.png')">
-    <img src="7.png" onclick="selectIcon(this, '7.png')">
-    <img src="8.png" onclick="selectIcon(this, '8.png')">
-    <img src="9.png" onclick="selectIcon(this, '9.png')">
-    <img src="10.png" onclick="selectIcon(this, '10.png')">
-  </div>
-
-  <div id="grid"></div>
-
-  <script>
-    let currentIcon = '';
-    let history = [];
-    const grid = document.getElementById('grid');
-    const rowsInput = document.getElementById('rows');
-    const colsInput = document.getElementById('cols');
-
-    function selectIcon(img, icon) {
-      document.querySelectorAll('#icons img').forEach(i => i.classList.remove('selected'));
-      img.classList.add('selected');
-      currentIcon = icon;
-    }
-
-    function createGrid() {
-      const rows = parseInt(rowsInput.value);
-      const cols = parseInt(colsInput.value);
-      grid.innerHTML = '';
-      grid.style.gridTemplateColumns = `repeat(${cols}, 70px)`;
-      history = [];
-
-      for (let i = 0; i < rows * cols; i++) {
-        const cell = document.createElement('div');
-        cell.className = 'cell';
-
-        cell.onclick = () => {
-          if (!currentIcon) return;
-          // Lưu trạng thái trước khi thay đổi để Undo
-          history.push({ cell: cell, prevContent: cell.innerHTML });
-          cell.innerHTML = `<img src="${currentIcon}">`;
-        };
-
-        grid.appendChild(cell);
-      }
-    }
-
-    function undo() {
-      const lastAction = history.pop();
-      if (lastAction) {
-        lastAction.cell.innerHTML = lastAction.prevContent;
-      }
-    }
-
-    function clearGrid() {
-      if(confirm("Bạn có chắc chắn muốn xóa toàn bộ bảng?")) {
-        document.querySelectorAll('.cell').forEach(c => c.innerHTML = '');
-        history = [];
-      }
-    }
-
-    // Khởi tạo bảng lần đầu
-    createGrid();
-  </script>
-</body>
-</html>
-  grid.style.gridTemplateColumns = `repeat(${cols}, 70px)`;
-  history = [];
-
-  for (let i = 0; i < rows * cols; i++) {
-    const cell = document.createElement('div');
-    cell.className = 'cell';
-
-    cell.onclick = () => {
-      if (!currentIcon) return;
-      history.push({ cell, prev: cell.innerHTML });
-      cell.innerHTML = `<img src="${currentIcon}">`;
-    };
-
-    grid.appendChild(cell);
-  }
-}
-
-function undo() {
-  const last = history.pop();
-  if (last) last.cell.innerHTML = last.prev;
-}
-
-function clearGrid() {
-  document.querySelectorAll('.cell').forEach(c => c.innerHTML = '');
-  history = [];
-}
-
-const grid = document.getElementById('grid');
-const rowsInput = document.getElementById('rows');
-const colsInput = document.getElementById('cols');
-
-createGrid();
-</script>
-
-</body>
-</html>
-
-
-
 
