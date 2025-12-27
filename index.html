@@ -10,16 +10,12 @@
     --primary-color: #ffcc00;
     --bg-color: #121212;
     --card-bg: #2c2c2c;
-    --accent-color: #007bff;
   }
 
-  * {
-    box-sizing: border-box;
-    -webkit-tap-highlight-color: transparent; /* Loại bỏ khung xanh khi chạm trên mobile */
-  }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
   body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    font-family: -apple-system, sans-serif;
     background: var(--bg-color);
     color: #fff;
     margin: 0;
@@ -28,82 +24,188 @@
     flex-direction: column;
     align-items: center;
     min-height: 100vh;
-    overflow-x: hidden;
   }
 
-  h2 {
-    margin: 10px 0;
-    font-size: 1.2rem;
-    color: var(--primary-color);
-    text-transform: uppercase;
-    letter-spacing: 1px;
-  }
-
-  /* Control Panel */
   .controls {
     display: flex;
+    flex-wrap: wrap;
     justify-content: center;
-    align-items: center;
-    gap: 5px;
+    gap: 8px;
     background: #1e1e1e;
-    padding: 10px;
+    padding: 12px;
     border-radius: 12px;
     margin-bottom: 15px;
     width: 100%;
-    max-width: 400px;
+    max-width: 500px;
+    z-index: 10;
   }
 
   input {
-    width: 40px;
-    padding: 8px 2px;
+    width: 50px;
+    padding: 8px;
     border-radius: 6px;
     border: 1px solid #444;
     background: #333;
     color: white;
     text-align: center;
-    font-weight: bold;
   }
 
   button {
-    padding: 8px 12px;
+    padding: 8px 15px;
     cursor: pointer;
     border: none;
     border-radius: 8px;
     background: #444;
     color: white;
     font-weight: 600;
-    font-size: 13px;
-    transition: transform 0.1s ease, background 0.2s;
-    will-change: transform;
+    transition: transform 0.1s;
   }
 
-  button:active {
-    transform: scale(0.92); /* Hiệu ứng nhấn mượt */
-  }
-
+  button:active { transform: scale(0.95); }
   .btn-create { background: #28a745; }
   .btn-clear { background: #dc3545; }
 
-  /* Icon Selection Area */
   #icons {
-    display: grid;
-    grid-template-columns: repeat(5, 1fr); /* Chia 2 hàng, mỗi hàng 5 icon */
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
     gap: 8px;
     margin-bottom: 20px;
-    width: 100%;
-    max-width: 350px;
+    max-width: 100%;
   }
 
   #icons img {
-    width: 100%;
-    aspect-ratio: 3/4;
-    object-fit: cover;
+    width: 45px;
+    height: 60px;
     cursor: pointer;
-    border-radius: 8px;
-    border: 3px solid transparent;
-    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    border-radius: 6px;
+    border: 2px solid transparent;
+    transition: 0.2s;
     background: #252525;
   }
+
+  #icons img.selected {
+    border-color: var(--primary-color);
+    transform: translateY(-3px);
+  }
+
+  /* KHẮC PHỤC LỖI HIỂN THỊ KHI SỐ LƯỢNG LỚN */
+  .grid-container {
+    width: 100%;
+    overflow: auto; /* Cho phép cuộn nếu bảng quá to so với màn hình */
+    display: flex;
+    justify-content: center;
+    padding-bottom: 20px;
+  }
+
+  #grid {
+    display: grid;
+    gap: 4px;
+    padding: 10px;
+    margin: 0 auto;
+  }
+
+  .cell {
+    width: 50px; /* Thu nhỏ kích thước ô để chứa được nhiều hơn */
+    height: 70px;
+    background: var(--card-bg);
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #3d3d3d;
+  }
+
+  .cell img {
+    width: 100%;
+    height: 100%;
+    border-radius: 4px;
+    pointer-events: none;
+    animation: pop 0.2s ease-out;
+  }
+
+  @keyframes pop {
+    from { transform: scale(0.7); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+  }
+</style>
+</head>
+<body>
+
+  <div class="controls">
+    Hàng: <input id="rows" type="number" value="4" min="1">
+    Cột: <input id="cols" type="number" value="5" min="1">
+    <button class="btn-create" onclick="createGrid()">Tạo bàn</button>
+    <button onclick="undo()">Quay lại</button>
+    <button class="btn-clear" onclick="clearGrid()">Xóa</button>
+  </div>
+
+  <div id="icons">
+    <img src="1.png" onclick="selectIcon(this, '1.png')">
+    <img src="2.png" onclick="selectIcon(this, '2.png')">
+    <img src="3.png" onclick="selectIcon(this, '3.png')">
+    <img src="4.png" onclick="selectIcon(this, '4.png')">
+    <img src="5.png" onclick="selectIcon(this, '5.png')">
+    <img src="6.png" onclick="selectIcon(this, '6.png')">
+    <img src="7.png" onclick="selectIcon(this, '7.png')">
+    <img src="8.png" onclick="selectIcon(this, '8.png')">
+    <img src="9.png" onclick="selectIcon(this, '9.png')">
+    <img src="10.png" onclick="selectIcon(this, '10.png')">
+  </div>
+
+  <div class="grid-container">
+    <div id="grid"></div>
+  </div>
+
+  <script>
+    let currentIcon = '';
+    let history = [];
+    const grid = document.getElementById('grid');
+    const rowsInput = document.getElementById('rows');
+    const colsInput = document.getElementById('cols');
+
+    function selectIcon(img, icon) {
+      document.querySelectorAll('#icons img').forEach(i => i.classList.remove('selected'));
+      img.classList.add('selected');
+      currentIcon = icon;
+    }
+
+    function createGrid() {
+      const rows = parseInt(rowsInput.value) || 1;
+      const cols = parseInt(colsInput.value) || 1;
+      
+      grid.innerHTML = '';
+      // Cố định chiều rộng cột để không bị nhảy khi bảng lớn
+      grid.style.gridTemplateColumns = `repeat(${cols}, 50px)`;
+      history = [];
+
+      for (let i = 0; i < rows * cols; i++) {
+        const cell = document.createElement('div');
+        cell.className = 'cell';
+        cell.onclick = () => {
+          if (!currentIcon) return;
+          history.push({ cell: cell, prev: cell.innerHTML });
+          cell.innerHTML = `<img src="${currentIcon}">`;
+        };
+        grid.appendChild(cell);
+      }
+    }
+
+    function undo() {
+      const last = history.pop();
+      if (last) last.cell.innerHTML = last.prev;
+    }
+
+    function clearGrid() {
+      document.querySelectorAll('.cell').forEach(c => c.innerHTML = '');
+      history = [];
+    }
+
+    createGrid();
+  </script>
+</body>
+</html>
 
   #icons img.selected {
     border-color: var(--primary-color);
@@ -396,5 +498,6 @@ createGrid();
 
 </body>
 </html>
+
 
 
