@@ -17,7 +17,7 @@
             align-items: center; 
             min-height: 100vh; 
             padding: 10px;
-            overflow-x: hidden; /* Chống rung màn hình chính */
+            overflow-x: hidden;
         }
 
         h2 { margin: 15px 0; color: var(--p); font-size: 1.2rem; text-transform: uppercase; }
@@ -55,20 +55,28 @@
         #icons img { width: 48px; height: 65px; cursor: pointer; border-radius: 8px; border: 2px solid transparent; background: #252525; transition: 0.2s; }
         #icons img.selected { border-color: var(--p); transform: translateY(-3px); box-shadow: 0 4px 10px rgba(255, 204, 0, 0.4); }
 
-        /* VÙNG CUỘN CHỐNG LỖI 10x10 */
         .scroll-wrapper {
             width: 100%;
-            overflow-x: auto; /* Kích hoạt cuộn ngang */
+            overflow-x: auto;
             padding: 10px;
-            display: block; /* Đảm bảo wrapper chiếm toàn chiều rộng */
+            display: block;
             -webkit-overflow-scrolling: touch;
         }
 
         #grid { 
             display: grid; 
             gap: 5px; 
-            margin: 0 auto; /* Căn giữa bảng bên trong vùng cuộn */
-            width: max-content; /* Quan trọng: Bảng giãn theo số cột thực tế */
+            margin: 0 auto;
+            width: max-content;
+        }
+
+        /* Style cho số thứ tự cột */
+        .col-header {
+            font-size: 12px;
+            color: #888;
+            text-align: center;
+            padding-bottom: 5px;
+            font-weight: bold;
         }
 
         .cell { 
@@ -129,10 +137,18 @@
         function createGrid() {
             const r = parseInt(rs.value) || 1, c = parseInt(cs.value) || 1;
             grid.innerHTML = ''; 
-            // Cố định kích thước ô là 50px để tính toán cuộn chính xác
             grid.style.gridTemplateColumns = `repeat(${c}, 50px)`; 
             hist = [];
 
+            // 1. Thêm hàng số thứ tự cột trên đầu
+            for (let j = 1; j <= c; j++) {
+                const header = document.createElement('div');
+                header.className = 'col-header';
+                header.innerText = j;
+                grid.appendChild(header);
+            }
+
+            // 2. Thêm các ô lưới
             for (let i = 0; i < r * c; i++) {
                 const cell = document.createElement('div');
                 cell.className = 'cell';
@@ -155,7 +171,6 @@
             hist = []; 
         }
 
-        // Khởi tạo bàn mặc định
         createGrid();
     </script>
 </body>
