@@ -2,108 +2,224 @@
 <html lang="vi">
 <head>
 <meta charset="UTF-8">
-<title>Memory Board</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Memory Board - Play Together</title>
 
 <style>
-body {
-  font-family: Arial, sans-serif;
-  background: #222;
-  color: #fff;
-  text-align: center;
-}
+  :root {
+    --primary-color: #ffcc00;
+    --bg-color: #1a1a1a;
+    --card-bg: #333;
+    --card-hover: #444;
+  }
 
-.controls {
-  margin: 10px;
-}
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: var(--bg-color);
+    color: #fff;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Căn giữa toàn bộ nội dung theo chiều ngang */
+    min-height: 100vh;
+    padding: 20px;
+  }
 
-input {
-  width: 60px;
-  padding: 5px;
-}
+  h2 {
+    margin-bottom: 20px;
+    color: var(--primary-color);
+    text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+  }
 
-button {
-  margin: 5px;
-  padding: 8px 12px;
-  cursor: pointer;
-}
+  .controls {
+    background: #2a2a2a;
+    padding: 15px 25px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    margin-bottom: 20px;
+  }
 
-#icons img {
-  width: 50px;
-  height: 70px;
-  margin: 5px;
-  cursor: pointer;
-  border-radius: 8px;
-  border: 3px solid transparent;
-}
+  input {
+    width: 50px;
+    padding: 8px;
+    border-radius: 6px;
+    border: none;
+    text-align: center;
+    margin: 0 5px;
+  }
 
-#icons img.selected {
-  border-color: yellow;
-}
+  button {
+    margin: 5px;
+    padding: 10px 18px;
+    cursor: pointer;
+    border: none;
+    border-radius: 6px;
+    background: #444;
+    color: white;
+    font-weight: bold;
+    transition: all 0.2s ease; /* Hiệu ứng mượt khi di chuột */
+  }
 
-#grid {
-  display: grid;
-  justify-content: center;
-  margin-top: 15px;
-  gap: 6px;
-}
+  button:hover {
+    background: #555;
+    transform: translateY(-2px);
+  }
 
-.cell {
-  width: 70px;
-  height: 90px;
-  background: #444;
-  border-radius: 8px;
-  cursor: pointer;
-}
+  button:active {
+    transform: translateY(0);
+  }
 
-.cell img {
-  width: 100%;
-  height: 100%;
-  border-radius: 8px;
-}
+  #icons {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    max-width: 500px;
+    margin-bottom: 25px;
+  }
+
+  #icons img {
+    width: 55px;
+    height: 75px;
+    cursor: pointer;
+    border-radius: 8px;
+    border: 3px solid transparent;
+    transition: transform 0.2s, border-color 0.2s;
+    object-fit: cover;
+  }
+
+  #icons img:hover {
+    transform: scale(1.1);
+  }
+
+  #icons img.selected {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 10px var(--primary-color);
+  }
+
+  #grid {
+    display: grid;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 10px;
+    padding: 10px;
+  }
+
+  .cell {
+    width: 70px;
+    height: 90px;
+    background: var(--card-bg);
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.3s, transform 0.1s;
+    overflow: hidden;
+  }
+
+  .cell:hover {
+    background: var(--card-hover);
+  }
+
+  .cell:active {
+    transform: scale(0.95);
+  }
+
+  .cell img {
+    width: 100%;
+    height: 100%;
+    border-radius: 8px;
+    animation: fadeIn 0.3s ease; /* Hiệu ứng hiện ảnh mượt */
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: scale(0.8); }
+    to { opacity: 1; transform: scale(1); }
+  }
 </style>
 </head>
-
 <body>
 
-<h2>Sự Kiện Play Together</h2>
+  <h2>Sự Kiện Play Together</h2>
 
-<div class="controls">
-  Hàng: <input id="rows" type="number" value="4" min="1">
-  Cột: <input id="cols" type="number" value="5" min="1">
-  <button onclick="createGrid()">Tạo bàn</button>
-  <button onclick="undo()">Quay lại</button>
-  <button onclick="clearGrid()">Xóa</button>
-</div>
+  <div class="controls">
+    Hàng: <input id="rows" type="number" value="4" min="1">
+    Cột: <input id="cols" type="number" value="5" min="1">
+    <button onclick="createGrid()" style="background: #28a745;">Tạo bàn</button>
+    <button onclick="undo()">Quay lại</button>
+    <button onclick="clearGrid()" style="background: #dc3545;">Xóa</button>
+  </div>
 
-<div id="icons">
-  <p>Chọn biểu tượng:</p>
-  <img src="1.png"   onclick="selectIcon(this, '1.png')">
-  <img src="2.png" onclick="selectIcon(this, '2.png')">
-  <img src="3.png"  onclick="selectIcon(this, '3.png')">
-  <img src="4.png"  onclick="selectIcon(this, '4.png')">
-  <img src="5.png"   onclick="selectIcon(this, '5.png')">
-  <img src="6.png" onclick="selectIcon(this, '6.png')">
-  <img src="7.png"  onclick="selectIcon(this, '7.png')">
-  <img src="8.png"  onclick="selectIcon(this, '8.png')">
-  <img src="9.png"  onclick="selectIcon(this, '9.png')">
-</div>
+  <div id="icons">
+    <img src="1.png" onclick="selectIcon(this, '1.png')">
+    <img src="2.png" onclick="selectIcon(this, '2.png')">
+    <img src="3.png" onclick="selectIcon(this, '3.png')">
+    <img src="4.png" onclick="selectIcon(this, '4.png')">
+    <img src="5.png" onclick="selectIcon(this, '5.png')">
+    <img src="6.png" onclick="selectIcon(this, '6.png')">
+    <img src="7.png" onclick="selectIcon(this, '7.png')">
+    <img src="8.png" onclick="selectIcon(this, '8.png')">
+    <img src="9.png" onclick="selectIcon(this, '9.png')">
+    <img src="10.png" onclick="selectIcon(this, '10.png')">
+  </div>
 
-<div id="grid"></div>
+  <div id="grid"></div>
 
-<script>
-let currentIcon = '';
-let history = [];
+  <script>
+    let currentIcon = '';
+    let history = [];
+    const grid = document.getElementById('grid');
+    const rowsInput = document.getElementById('rows');
+    const colsInput = document.getElementById('cols');
 
-function selectIcon(img, icon) {
-  document.querySelectorAll('#icons img').forEach(i => i.classList.remove('selected'));
-  img.classList.add('selected');
-  currentIcon = icon;
-}
+    function selectIcon(img, icon) {
+      document.querySelectorAll('#icons img').forEach(i => i.classList.remove('selected'));
+      img.classList.add('selected');
+      currentIcon = icon;
+    }
 
-function createGrid() {
-  const rows = rowsInput.value;
-  const cols = colsInput.value;
-  grid.innerHTML = '';
+    function createGrid() {
+      const rows = parseInt(rowsInput.value);
+      const cols = parseInt(colsInput.value);
+      grid.innerHTML = '';
+      grid.style.gridTemplateColumns = `repeat(${cols}, 70px)`;
+      history = [];
+
+      for (let i = 0; i < rows * cols; i++) {
+        const cell = document.createElement('div');
+        cell.className = 'cell';
+
+        cell.onclick = () => {
+          if (!currentIcon) return;
+          // Lưu trạng thái trước khi thay đổi để Undo
+          history.push({ cell: cell, prevContent: cell.innerHTML });
+          cell.innerHTML = `<img src="${currentIcon}">`;
+        };
+
+        grid.appendChild(cell);
+      }
+    }
+
+    function undo() {
+      const lastAction = history.pop();
+      if (lastAction) {
+        lastAction.cell.innerHTML = lastAction.prevContent;
+      }
+    }
+
+    function clearGrid() {
+      if(confirm("Bạn có chắc chắn muốn xóa toàn bộ bảng?")) {
+        document.querySelectorAll('.cell').forEach(c => c.innerHTML = '');
+        history = [];
+      }
+    }
+
+    // Khởi tạo bảng lần đầu
+    createGrid();
+  </script>
+</body>
+</html>
   grid.style.gridTemplateColumns = `repeat(${cols}, 70px)`;
   history = [];
 
@@ -140,3 +256,4 @@ createGrid();
 
 </body>
 </html>
+
